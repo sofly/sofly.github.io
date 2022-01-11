@@ -18,13 +18,7 @@ interface Props {
   illuminationCanvasRef: React.RefObject<HTMLCanvasElement>;
 }
 
-const useIllumination = ({
-  width,
-  height,
-  videoNode,
-  faceDetector,
-  illuminationCanvasRef,
-}: Props) => {
+const useIllumination = ({ width, height, videoNode, faceDetector, illuminationCanvasRef }: Props) => {
   const [state, setState] = useState({
     algorithmMs: 0,
     shadowValue: 0,
@@ -43,11 +37,7 @@ const useIllumination = ({
     const illuminationCanvas = illuminationCanvasRef.current;
     const illuminationCanvasCtx = illuminationCanvas?.getContext('2d')!;
 
-    const faceDetectionStartedAt = Date.now();
-
     const faceMesh = await faceDetector.detect(videoNode);
-
-    const faceDetectionMs = Date.now() - faceDetectionStartedAt;
 
     if (!!faceMesh) {
       const startAt = Date.now();
@@ -74,15 +64,14 @@ const useIllumination = ({
         illuminationCanvasCtx,
       });
 
-      setState((prevState) => ({
-        ...prevState,
-        algorithmMs: Date.now() - startAt,
-        faceDetectionMs,
+      onIlluminationChange({
         shadowValue: shadowPixels / luminanceData.pixelsInFace,
         saturationValue: saturationPixels / luminanceData.pixelsInFace,
         backgroundSaturationValue:
-          luminanceData.backgroundSaturationPixels / (width * height - luminanceData.pixelsInFace),
-      }));
+          luminanceData.saturationPixelsInBackground / (width * height - luminanceData.pixelsInFace),
+      });
+    } else {
+      onIlluminationChange(null);
     }
   });
 
