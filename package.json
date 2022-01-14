@@ -2,8 +2,8 @@
   "name": "react-vite-illumination",
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
+    "dev": "vite --port=30001",
+    "build": "tsc && vite build --base=/app/",
     "preview": "vite preview"
   },
   "dependencies": {

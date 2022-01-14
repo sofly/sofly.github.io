@@ -63,15 +63,7 @@ const useIllumination = ({ width, height, videoNode, faceDetector, illuminationC
         shadowThreshold: luminanceData.shadowThreshold,
         illuminationCanvasCtx,
       });
-
-      onIlluminationChange({
-        shadowValue: shadowPixels / luminanceData.pixelsInFace,
-        saturationValue: saturationPixels / luminanceData.pixelsInFace,
-        backgroundSaturationValue:
-          luminanceData.saturationPixelsInBackground / (width * height - luminanceData.pixelsInFace),
-      });
     } else {
-      onIlluminationChange(null);
     }
   });
 
