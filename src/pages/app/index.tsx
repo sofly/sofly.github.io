@@ -3,18 +3,16 @@ import classnames from 'classnames';
 
 import { useStream } from '../../hooks/use-stream';
 import { useVideoState } from '../../hooks/use-video-state';
-import { useFaceDetector } from '../../hooks/use-face-detector';
 
 import { IDEAL_RESOLUTION } from './constants';
 
-import Illumination from './components/illumination';
+import ArucoDetection from './components/aruco-detection';
 
 import styles from './styles.module.scss';
 
 function App() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const faceDetector = useFaceDetector();
   const [videoState, videoStateActions] = useVideoState();
   const [streamState, streamActions, streamHelpers] = useStream({
     videoRef,
@@ -27,11 +25,7 @@ function App() {
     streamActions.createStream();
   }, []);
 
-  const isAppReady =
-    !!faceDetector &&
-    videoState.isPlaying &&
-    videoState.isLoadedMetaData &&
-    streamHelpers.isStateReady();
+  const isAppReady = videoState.isPlaying && videoState.isLoadedMetaData && streamHelpers.isStateReady();
 
   const videoTrack = streamState.stream?.getVideoTracks()[0];
   const constraints = videoTrack?.getSettings();
@@ -51,12 +45,7 @@ function App() {
         />
 
         {isAppReady && (
-          <Illumination
-            width={constraints?.width!}
-            height={constraints?.height!}
-            videoNode={videoRef.current!}
-            faceDetector={faceDetector}
-          />
+          <ArucoDetection width={constraints?.width!} height={constraints?.height!} videoNode={videoRef.current!} />
         )}
       </div>
 
