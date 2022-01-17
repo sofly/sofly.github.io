@@ -13,12 +13,9 @@ import useScheduler from '../use-scheduler';
 import * as canvasHelpers from './helpers/canvas';
 import * as luminanceHelpers from './helpers/luminance';
 
-const modelSize = 500.0; //millimeters
+import { CORRECT_IDS } from '../../constants';
 
-const TOP_LEFT_ID = 923;
-const TOP_RIGHT_ID = 1001;
-const BOTTOM_LEFT_ID = 1007;
-const BOTTOM_RIGHT_ID = 241;
+const modelSize = 10.0; //millimeters
 
 interface Props {
   width: number;
@@ -55,6 +52,7 @@ function drawCorners({ markers, context }: any) {
 
 const useIllumination = ({ width, height, videoNode, illuminationCanvasRef }: Props) => {
   const [state, setState] = useState<{
+    uniqIds: number[];
     ids: number[];
     time: number;
     rotation: {
@@ -62,19 +60,27 @@ const useIllumination = ({ width, height, videoNode, illuminationCanvasRef }: Pr
       roll: number;
       pitch: number;
     };
+    countOfSuccess: number;
   }>({
     ids: [],
+    uniqIds: [],
     time: 0,
     rotation: {
       yaw: 0,
       roll: 0,
       pitch: 0,
     },
+    countOfSuccess: 0,
   });
   const [, schedulerActions] = useScheduler();
 
   const pos: any = useCreateConst(() => new POS.Posit(modelSize, width));
-  const detector: any = useCreateConst(() => new Aruco.Detector());
+  const detector: any = useCreateConst(
+    () =>
+      new Aruco.Detector({
+        dictionaryName: 'ARUCO',
+      }),
+  );
 
   const [, imageCanvasCtx] = useCanvas({ width, height });
 
@@ -110,12 +116,15 @@ const useIllumination = ({ width, height, videoNode, illuminationCanvasRef }: Pr
       };
 
       drawCorners({ markers, context: illuminationCanvasCtx });
+      const ids = markers.map(({ id }: any) => id) as number[];
 
       setState((prevState) => ({
         ...prevState,
-        ids: markers.map(({ id }: any) => id),
+        ids,
         time: Date.now() - startedAt,
+        uniqIds: [...new Set([...prevState.uniqIds, ...ids])],
         rotation: bestRotation,
+        countOfSuccess: prevState.countOfSuccess + (CORRECT_IDS.every((id) => ids.includes(id)) ? 1 : 0),
       }));
     }
   });

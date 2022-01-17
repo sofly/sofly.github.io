@@ -6,6 +6,8 @@ import useArucoDetection from './hooks/use-aruco-detection';
 
 import styles from './styles.module.scss';
 
+import { CORRECT_IDS } from './constants';
+
 interface Props {
   width: number;
   height: number;
@@ -33,7 +35,22 @@ const Illumination = ({ width, height, videoNode }: Props) => {
       <Mask width={width} height={height} illuminationCanvasRef={illuminationCanvasRef} />
 
       <div className={styles.info}>
-        <p>Ids: {arucoDetectionState.ids.join(', ')}</p>
+        <p>
+          Uniq ids:{' '}
+          {arucoDetectionState.uniqIds.map((id) => (
+            <span key={id} className={CORRECT_IDS.includes(id) ? styles.correct : styles.incorrect}>
+              {id}
+            </span>
+          ))}
+        </p>
+        <p>
+          Ids:{' '}
+          {arucoDetectionState.ids.map((id) => (
+            <span key={id} className={CORRECT_IDS.includes(id) ? styles.correct : styles.incorrect}>
+              {id}
+            </span>
+          ))}
+        </p>
         <p>
           Rotation: <br />
           Roll: {Math.round(arucoDetectionState.rotation.roll)}
@@ -44,6 +61,7 @@ const Illumination = ({ width, height, videoNode }: Props) => {
           <br />
         </p>
         <p>Time: {arucoDetectionState.time}ms</p>
+        <p>Count of success frames(4 ids are detected): {arucoDetectionState.countOfSuccess}</p>
       </div>
     </>
   );
