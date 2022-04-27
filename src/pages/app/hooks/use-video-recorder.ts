@@ -37,7 +37,7 @@ export const useVideoRecorder = () => {
       try {
         recorder = new RecordRTCPromisesHandler(stream, {
           type: 'video',
-          mimeType: 'video/mp4',
+          mimeType: 'video/webm;codecs=vp8',
           recorderType: MediaStreamRecorder,
         });
       } catch (e) {
