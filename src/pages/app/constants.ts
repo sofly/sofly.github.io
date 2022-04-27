@@ -1,5 +1,5 @@
 export const IDEAL_RESOLUTION = {
-  WIDTH: 320,
-  HEIGHT: 240,
+  WIDTH: 1600,
+  HEIGHT: 1200,
   ASPECT_RATIO: 4 / 3,
 };
